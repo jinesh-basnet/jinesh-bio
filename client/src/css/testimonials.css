@@ -1,0 +1,354 @@
+.testimonials-section {
+    padding: 10rem 0;
+    background: var(--light-bg);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .testimonials-section {
+    background: var(--dark-bg);
+}
+
+.testimonials-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.testimonials-header h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 1rem;
+}
+
+.testimonials-main {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 4rem;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.testimonials-visual {
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    border-radius: 40px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.quote-icon-bg {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    font-size: 15rem;
+    color: rgba(255, 255, 255, 0.1);
+    transform: rotate(-10deg);
+}
+
+.client-display {
+    position: relative;
+    z-index: 2;
+}
+
+.avatar-wrapper {
+    width: 280px;
+    height: 350px;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: #eee;
+}
+
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+    font-weight: 900;
+    background: var(--gradient-secondary);
+    color: white;
+}
+
+.testimonials-content-box {
+    padding: 2rem;
+    position: relative;
+}
+
+.nav-controls.top {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.nav-arrow {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: var(--transition-fast);
+    color: var(--text-dark);
+}
+
+.nav-arrow:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.rating-stars {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 2rem;
+}
+
+.star {
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.1);
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.message {
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 3rem;
+    color: var(--text-dark);
+}
+
+.client-meta h4 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.client-role {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.sep {
+    opacity: 0.4;
+}
+
+.company {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+}
+
+.testimonials-footer {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.pagination-dots {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: var(--glass-border);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.dot.active {
+    width: 30px;
+    border-radius: 10px;
+    background: var(--primary-color);
+}
+
+.autoplay-btn {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.autoplay-btn.active {
+    color: var(--primary-color);
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .testimonials-main {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .testimonials-visual {
+        height: 400px;
+    }
+
+    .avatar-wrapper {
+        width: 220px;
+        height: 280px;
+    }
+
+    .message {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonials-header h2 {
+        font-size: 2.5rem;
+    }
+}
+
+.testimonial-cta {
+    text-align: center;
+    margin-top: 5rem;
+    padding: 3rem;
+    background: var(--glass-bg);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.testimonial-cta p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.testimonial-modal {
+    background: var(--light-bg);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 3rem;
+    border-radius: 30px;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+}
+
+[data-theme="dark"] .testimonial-modal {
+    background: var(--surface-dark);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+    transform: rotate(90deg);
+}
+
+.testimonial-submission-form {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.rating-input {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.rating-input .star {
+    cursor: pointer;
+    transition: var(--transition-fast);
+    color: rgba(0, 0, 0, 0.1);
+}
+
+.rating-input .star:hover {
+    transform: scale(1.2);
+}
+
+.rating-input .star.active {
+    color: #ffc107;
+}
+
+.submit-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    font-weight: 800;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .testimonial-modal {
+        padding: 2rem;
+    }
+}

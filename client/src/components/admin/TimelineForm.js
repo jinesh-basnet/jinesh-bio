@@ -60,13 +60,22 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.location && <span className="error-text">{validationErrors.location}</span>}
       </div>
       <div className="form-group">
-        <label>Period:</label>
+        <label>Period Label (e.g. 2021 - Present):</label>
         <input
           type="text"
           value={item.period || ''}
           onChange={(e) => handleInputChange('period', e.target.value)}
         />
         {validationErrors.period && <span className="error-text">{validationErrors.period}</span>}
+      </div>
+      <div className="form-group">
+        <label>Sort Date (Items are ordered by this date):</label>
+        <input
+          type="date"
+          value={item.date ? new Date(item.date).toISOString().split('T')[0] : ''}
+          onChange={(e) => handleInputChange('date', e.target.value)}
+        />
+        <p className="help-text">📅 Note: This date is used for chronological sorting (Recent first).</p>
       </div>
       <div className="form-group">
         <label>Description:</label>

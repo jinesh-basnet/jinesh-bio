@@ -45,7 +45,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/portfolio_db')
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio_db';
+mongoose.connect(MONGODB_URI)
   .then(async () => {
     console.log('Connected to MongoDB');
     await seedDefaultAdmin();
@@ -118,7 +119,7 @@ app.get('/api/about', async (req, res) => {
 app.get('/api/timeline', async (req, res) => {
   try {
     const Timeline = require('./models/Timeline');
-    const timeline = await Timeline.find().sort({ order: 1, createdAt: -1 });
+    const timeline = await Timeline.find().sort({ date: -1, order: 1 });
     res.json(timeline);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch timeline' });

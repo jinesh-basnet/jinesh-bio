@@ -152,7 +152,7 @@ async function generateCV(data, outputPath) {
                         .text(item.company || item.institution || '', leftMargin, yPosition + 18);
 
                     doc.fontSize(9).fillColor(theme.light).font('Helvetica-Oblique')
-                        .text(item.date || item.year, rightMargin - 100, yPosition + 18, {
+                        .text(item.period || item.date || item.year || '', rightMargin - 100, yPosition + 18, {
                             width: 100,
                             align: 'right'
                         });

@@ -76,13 +76,30 @@ const HomeForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
       <div className="form-section">
         <h4>Hero Section</h4>
         <div className="form-group">
-          <label>Heading:</label>
+          <label>Heading (e.g. Hi, I'm ...):</label>
           <input
             type="text"
             value={item.hero?.heading || ''}
             onChange={(e) => handleHeroChange('heading', e.target.value)}
           />
           {validationErrors.hero_heading && <span className="error-text">{validationErrors.hero_heading}</span>}
+        </div>
+        <div className="form-group">
+          <label>Highlight Text (The text that appears in blue/gradient):</label>
+          <input
+            type="text"
+            value={item.hero?.highlightText || ''}
+            onChange={(e) => handleHeroChange('highlightText', e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Animated Typing Texts (comma-separated):</label>
+          <input
+            type="text"
+            value={item.hero?.typingTexts ? item.hero.typingTexts.join(', ') : ''}
+            onChange={(e) => handleHeroChange('typingTexts', e.target.value.split(',').map(t => t.trim()))}
+          />
+          <p className="help-text">💡 These texts will cycle through with a typing animation.</p>
         </div>
         <div className="form-group">
           <label>Description:</label>

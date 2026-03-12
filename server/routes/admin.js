@@ -464,6 +464,7 @@ router.put('/home', upload.single('profileImage'), async (req, res) => {
         homeData.hero = JSON.parse(homeData.hero);
       } catch (e) {
         console.error('Error parsing hero string:', e);
+        homeData.hero = {}; // Initialize as object to prevent crash
       }
     }
 
@@ -472,6 +473,7 @@ router.put('/home', upload.single('profileImage'), async (req, res) => {
         homeData.skills = JSON.parse(homeData.skills);
       } catch (e) {
         console.error('Error parsing skills string:', e);
+        homeData.skills = { skillsList: [] }; // Provide fallback structure
       }
     }
 
@@ -532,7 +534,7 @@ router.put('/home', upload.single('profileImage'), async (req, res) => {
 
 router.get('/timeline', async (req, res) => {
   try {
-    const timelineItems = await Timeline.find().sort({ order: 1, createdAt: -1 });
+    const timelineItems = await Timeline.find().sort({ date: -1, order: 1 });
     res.json(timelineItems);
   } catch (error) {
     console.error('Error fetching timeline:', error);

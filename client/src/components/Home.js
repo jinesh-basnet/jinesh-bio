@@ -78,8 +78,8 @@ const Home = () => {
   }, []);
 
   const hero = homeData?.hero || {
-    title: "Hi, I'm Jinesh Basnet",
-    subtitle: "Full Stack Developer & Modern Web Enthusiast",
+    heading: "Hi, I'm Jinesh Basnet",
+    highlightText: "Jinesh Basnet",
     description: "I build robust, scalable, and visually stunning web applications that solve real-world problems.",
     typingTexts: ["Full Stack Developer", "MERN Expert", "UI/UX Designer", "Problem Solver"],
     buttons: [
@@ -110,10 +110,21 @@ const Home = () => {
     );
   }
 
-  const heroTitle = hero.title || "Hi, I'm Jinesh Basnet";
-  const titleParts = heroTitle.split(" ");
-  const titleStart = titleParts.slice(0, -2).join(" ");
-  const titleEnd = titleParts.slice(-2).join(" ");
+  const heroHeading = hero.heading || "Hi, I'm Jinesh Basnet";
+  const highlightText = hero.highlightText || "Jinesh Basnet";
+  
+  // Cleanly split heading based on highlight text if possible
+  let titleStart = heroHeading;
+  let titleEnd = highlightText;
+  
+  if (heroHeading.includes(highlightText)) {
+    titleStart = heroHeading.replace(highlightText, "").trim();
+  } else {
+    // Fallback to old behavior if highlight text isn't in heading
+    const titleParts = heroHeading.split(" ");
+    titleStart = titleParts.slice(0, -2).join(" ");
+    titleEnd = titleParts.slice(-2).join(" ");
+  }
 
   return (
     <main id="main-content">
@@ -270,7 +281,7 @@ const Home = () => {
                 .map((skill, index) => (
                   <motion.div
                     layout
-                    key={skill.name}
+                    key={skill._id || skill.name}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}

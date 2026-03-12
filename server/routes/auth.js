@@ -45,13 +45,13 @@ const seedInitialData = async () => {
     if (homeCount === 0) {
       const defaultHome = new Home({
         hero: {
-          title: "Hi, I'm Jinesh Basnet",
-          subtitle: "Full Stack Developer & Modern Web Enthusiast",
+          heading: "Hi, I'm Jinesh Basnet",
+          highlightText: "Jinesh Basnet",
           description: "I build robust, scalable, and visually stunning web applications that solve real-world problems.",
           typingTexts: ["Full Stack Developer", "MERN Expert", "UI/UX Designer", "Problem Solver"],
           buttons: [
-            { text: "View Projects", link: "#projects", type: "primary" },
-            { text: "Contact Me", link: "#contact", type: "secondary" }
+            { text: "View Projects", link: "/projects", type: "primary" },
+            { text: "Contact Me", link: "/contact", type: "secondary" }
           ]
         },
         skills: {
@@ -93,6 +93,7 @@ const seedInitialData = async () => {
           period: '2021 - Present',
           description: 'Leading the development of complex web applications using React and Node.js.',
           technologies: ['React', 'Node.js', 'MongoDB', 'AWS'],
+          date: new Date('2021-01-01'),
           order: 1
         },
         {
@@ -103,6 +104,7 @@ const seedInitialData = async () => {
           period: '2017 - 2021',
           description: 'Graduated with honors, specializing in Software Engineering.',
           technologies: ['C++', 'Data Structures', 'Algorithms', 'DBMS'],
+          date: new Date('2017-01-01'),
           order: 2
         }
       ];

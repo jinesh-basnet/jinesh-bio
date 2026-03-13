@@ -64,15 +64,6 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// In production, serve the React build as static assets
-if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
-  app.use(express.static(clientBuildPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-}
-
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio_db';
 mongoose.connect(MONGODB_URI)
@@ -358,6 +349,15 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// In production, serve the React build as static assets
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+
 // generic error middleware (should be after all routes)
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
@@ -367,3 +367,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT} (NODE_ENV=${process.env.NODE_ENV})`);
 });
+
+module.exports = app;

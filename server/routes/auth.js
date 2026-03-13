@@ -8,6 +8,7 @@ const Timeline = require('../models/Timeline');
 const Home = require('../models/Home');
 const Blog = require('../models/Blog');
 const Testimonial = require('../models/Testimonial');
+const Settings = require('../models/Settings');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
@@ -186,6 +187,30 @@ const seedInitialData = async () => {
       ];
       await Testimonial.insertMany(initialTestimonials);
       console.log('Initial testimonials seeded');
+    }
+
+    const settingsCount = await Settings.countDocuments();
+    if (settingsCount === 0) {
+      const defaultSettings = new Settings({
+        siteName: 'Portfolio',
+        logoText: 'Portfolio',
+        footerCopyright: '© Stack-Nova @ Jinesh Basnet. All rights reserved.',
+        navLinks: [
+          { label: 'Home', path: '/', order: 1 },
+          { label: 'About', path: '/about', order: 2 },
+          { label: 'Projects', path: '/projects', order: 3 },
+          { label: 'Blog', path: '/blog', order: 4 },
+          { label: 'Testimonials', path: '/testimonials', order: 5 },
+          { label: 'Contact', path: '/contact', order: 6 }
+        ],
+        socialLinks: [
+          { platform: 'GitHub', url: 'https://github.com/jinesh-basnet', icon: 'fab fa-github', order: 1 },
+          { platform: 'Facebook', url: 'https://www.facebook.com/jinesa.basneta', icon: 'fab fa-facebook', order: 2 },
+          { platform: 'Instagram', url: 'https://www.instagram.com/jinesh112/?hl=en', icon: 'fab fa-instagram', order: 3 }
+        ]
+      });
+      await defaultSettings.save();
+      console.log('Initial site settings seeded');
     }
   } catch (error) {
     console.error('Error seeding initial data:', error);

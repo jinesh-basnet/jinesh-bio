@@ -57,9 +57,12 @@ const ProjectsSection = ({
       if (!response.ok) throw new Error('Failed to fetch repos');
       const repos = await response.json();
 
+      let createdCount = 0;
+      // Use a local set of URLs to track what we've already synced during this session
+      const existingUrls = new Set(projects.map(p => p.html_url));
+
       for (const repo of repos) {
-        const exists = projects.find(p => p.html_url === repo.html_url);
-        if (!exists) {
+        if (!existingUrls.has(repo.html_url)) {
           const projectData = {
             name: repo.name,
             description: repo.description || 'No description provided',
@@ -71,8 +74,17 @@ const ProjectsSection = ({
             type: 'project',
             featured: false
           };
+          
           await onSaveNew(projectData);
+          existingUrls.add(repo.html_url);
+          createdCount++;
         }
+      }
+      
+      if (createdCount > 0) {
+        alert(`Successfully synced ${createdCount} new projects!`);
+      } else {
+        alert('All projects are already up to date.');
       }
     } catch (error) {
       console.error('Sync error:', error);

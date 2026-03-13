@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const timelineItems = await Timeline.find().sort({ order: 1, createdAt: -1 });
+    // Sort by Date (oldest first/birth), then by order as a tie-breaker
+    const timelineItems = await Timeline.find().sort({ date: 1, order: 1, createdAt: 1 });
     res.json(timelineItems);
   } catch (error) {
     console.error('Error fetching timeline:', error);

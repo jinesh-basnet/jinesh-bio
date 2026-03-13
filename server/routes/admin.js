@@ -10,6 +10,7 @@ const Home = require('../models/Home');
 const Timeline = require('../models/Timeline');
 const User = require('../models/User');
 const Contact = require('../models/Contact');
+const Settings = require('../models/Settings');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const { removeBackground } = require('../utils/removeBackground');
 
@@ -92,6 +93,12 @@ router.post('/projects', upload.single('image'), async (req, res) => {
 
     if (typeof projectData.topics === 'string') {
       projectData.topics = projectData.topics.split(',').map(t => t.trim());
+    }
+
+    // Check for duplicates
+    const existingProject = await Project.findOne({ html_url: projectData.html_url });
+    if (existingProject) {
+      return res.status(200).json(existingProject); // Or return conflict, but 200 is safer for sync
     }
 
     const project = new Project(projectData);
@@ -534,7 +541,7 @@ router.put('/home', upload.single('profileImage'), async (req, res) => {
 
 router.get('/timeline', async (req, res) => {
   try {
-    const timelineItems = await Timeline.find().sort({ date: -1, order: 1 });
+    const timelineItems = await Timeline.find().sort({ date: 1, order: 1 });
     res.json(timelineItems);
   } catch (error) {
     console.error('Error fetching timeline:', error);
@@ -613,6 +620,47 @@ router.delete('/timeline/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting timeline item:', error);
     res.status(500).json({ error: 'Failed to delete timeline item' });
+  }
+});
+
+router.get('/settings', async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = new Settings();
+      await settings.save();
+    }
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    res.status(500).json({ error: 'Failed to fetch settings' });
+  }
+});
+
+router.put('/settings', async (req, res) => {
+  try {
+    const settingsData = { ...req.body };
+    
+    // Ensure nested arrays are handled if they come as strings (though UI should send JSON)
+    if (typeof settingsData.navLinks === 'string') {
+      settingsData.navLinks = JSON.parse(settingsData.navLinks);
+    }
+    if (typeof settingsData.socialLinks === 'string') {
+      settingsData.socialLinks = JSON.parse(settingsData.socialLinks);
+    }
+
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = new Settings(settingsData);
+    } else {
+      Object.assign(settings, settingsData);
+    }
+
+    await settings.save();
+    res.json(settings);
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    res.status(500).json({ error: 'Failed to update settings' });
   }
 });
 

@@ -24,6 +24,8 @@ if (dotenvResult.error) {
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
@@ -35,14 +37,41 @@ const { router: authRoutes, seedDefaultAdmin, seedInitialData } = require('./rou
 const adminRoutes = require('./routes/admin');
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// security middleware
+app.use(helmet());
+
+// rate limiting (adjust as needed)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
+
+// CORS configuration (comma-separated list in env var)
+const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+app.use(cors({
+  origin: allowedOrigins.length ? allowedOrigins : true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// In production, serve the React build as static assets
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio_db';
@@ -99,9 +128,25 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/home', async (req, res) => {
   try {
     const Home = require('./models/Home');
-    const home = await Home.findOne();
-    res.json(home);
+    const Project = require('./models/Project');
+    const About = require('./models/About');
+
+    const [home, projectCount, about] = await Promise.all([
+      Home.findOne(),
+      Project.countDocuments(),
+      About.findOne()
+    ]);
+
+    // Construct stats object
+    const stats = {
+      projectsCount: projectCount || 0,
+      yearsOfExperience: about?.experience || 0,
+      skillsCount: home?.skills?.skillsList?.length || 0
+    };
+
+    res.json({ ...home?.toObject(), stats });
   } catch (error) {
+    console.error('Error fetching home data:', error);
     res.status(500).json({ error: 'Failed to fetch home data' });
   }
 });
@@ -119,7 +164,7 @@ app.get('/api/about', async (req, res) => {
 app.get('/api/timeline', async (req, res) => {
   try {
     const Timeline = require('./models/Timeline');
-    const timeline = await Timeline.find().sort({ date: -1, order: 1 });
+    const timeline = await Timeline.find().sort({ date: 1, order: 1 });
     res.json(timeline);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch timeline' });
@@ -157,7 +202,36 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
-// Download CV/Resume as PDF
+app.get('/api/settings', async (req, res) => {
+  try {
+    const Settings = require('./models/Settings');
+    let settings = await Settings.findOne();
+    if (!settings) {
+      return res.json({
+        siteName: 'Portfolio',
+        logoText: 'Portfolio',
+        footerCopyright: '© Stack-Nova @ Jinesh Basnet. All rights reserved.',
+        navLinks: [
+          { label: 'Home', path: '/', order: 1 },
+          { label: 'About', path: '/about', order: 2 },
+          { label: 'Projects', path: '/projects', order: 3 },
+          { label: 'Blog', path: '/blog', order: 4 },
+          { label: 'Testimonials', path: '/testimonials', order: 5 },
+          { label: 'Contact', path: '/contact', order: 6 }
+        ],
+        socialLinks: [
+          { platform: 'GitHub', url: 'https://github.com/jinesh-basnet', icon: 'fab fa-github', order: 1 },
+          { platform: 'Facebook', url: 'https://www.facebook.com/jinesa.basneta', icon: 'fab fa-facebook', order: 2 },
+          { platform: 'Instagram', url: 'https://www.instagram.com/jinesh112/?hl=en', icon: 'fab fa-instagram', order: 3 }
+        ]
+      });
+    }
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch settings' });
+  }
+});
+
 app.get('/api/download-cv', async (req, res) => {
   try {
     const About = require('./models/About');
@@ -166,13 +240,11 @@ app.get('/api/download-cv', async (req, res) => {
     const Testimonial = require('./models/Testimonial');
     const { generateCV } = require('./utils/cvGenerator');
 
-    // Fetch all necessary data
     const about = await About.findOne();
     const timeline = await Timeline.find().sort({ order: 1, createdAt: -1 });
     const projects = await Project.find().sort({ order: 1, createdAt: -1 });
     const testimonials = await Testimonial.find({ isActive: true, featured: true }).sort({ order: 1 });
 
-    // Prepare data for CV generation
     const cvData = {
       about,
       timeline,
@@ -180,13 +252,10 @@ app.get('/api/download-cv', async (req, res) => {
       testimonials
     };
 
-    // Generate CV
     const cvPath = path.join(__dirname, 'uploads', `cv-${Date.now()}.pdf`);
     await generateCV(cvData, cvPath);
 
-    // Send file for download
     res.download(cvPath, 'Resume.pdf', (err) => {
-      // Delete the file after sending
       if (fs.existsSync(cvPath)) {
         fs.unlinkSync(cvPath);
       }
@@ -289,6 +358,12 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// generic error middleware (should be after all routes)
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+});
+
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} (NODE_ENV=${process.env.NODE_ENV})`);
 });

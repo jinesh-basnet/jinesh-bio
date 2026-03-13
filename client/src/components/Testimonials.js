@@ -219,7 +219,7 @@ const Testimonials = () => {
         <div className="testimonial-cta">
           <p>Worked with me before?</p>
           <button className="btn outline" onClick={() => setShowForm(true)}>
-            Share Your Experience
+            <FaPaperPlane /> Share Your Experience
           </button>
         </div>
 

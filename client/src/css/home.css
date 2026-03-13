@@ -6,6 +6,7 @@
     overflow: hidden;
     background: var(--dark-bg);
     color: var(--text-light);
+    padding-top: 80px;
 }
 
 .home-background {

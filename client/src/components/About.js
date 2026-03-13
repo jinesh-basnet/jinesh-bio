@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Timeline from './Timeline';
 import CircularSkill from './CircularSkill';
 import '../css/about.css';
@@ -19,8 +20,10 @@ import {
   FaArrowRight,
   FaDownload
 } from 'react-icons/fa';
+import { Tilt } from 'react-tilt';
 
 const About = () => {
+  const navigate = useNavigate();
   const [aboutData, setAboutData] = useState(null);
 
   useEffect(() => {
@@ -118,22 +121,37 @@ const About = () => {
             >
               <div className="profile-container">
                 <div className="profile-glass">
-                  <div className="profile-img-wrapper">
-                    {aboutData?.profileImage ? (
-                      <img src={aboutData.profileImage} alt="Profile" />
-                    ) : (
-                      <div className="profile-placeholder">
-                        <span className="emoji">👨‍💻</span>
-                      </div>
-                    )}
-                  </div>
+                  <Tilt options={{ max: 25, scale: 1.05, speed: 1000 }}>
+                    <motion.div 
+                      className="profile-img-wrapper"
+                      initial={{ scale: 0.9 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ duration: 1 }}
+                    >
+                      {aboutData?.profileImage ? (
+                        <img src={aboutData.profileImage} alt="Profile" />
+                      ) : (
+                        <div className="profile-placeholder">
+                          <span className="emoji">👨‍💻</span>
+                        </div>
+                      )}
+                    </motion.div>
+                  </Tilt>
                 </div>
-                <div className="decor-circle"></div>
-                <div className="decor-dots"></div>
+                <motion.div 
+                  className="decor-circle"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                ></motion.div>
+                <motion.div 
+                  className="decor-dots"
+                  animate={{ y: [0, 15, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                ></motion.div>
               </div>
 
               <div className="experience-badge">
-                <span className="years">03</span>
+                <span className="years">{String(aboutData?.experience || 3).padStart(2, '0')}</span>
                 <span className="text">Years Of <br /> Experience</span>
               </div>
             </motion.div>
@@ -169,9 +187,8 @@ const About = () => {
 
               <div className="about-actions">
                 <motion.button
-                  whileHover={{ x: 5 }}
                   className="btn-premium"
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => navigate('/contact')}
                 >
                   Work With Me <FaArrowRight />
                 </motion.button>

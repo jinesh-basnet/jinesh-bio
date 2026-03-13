@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { FaBriefcase, FaGraduationCap, FaCertificate, FaSpinner, FaHeart, FaTrophy } from 'react-icons/fa';
 
 const Timeline = () => {
   const [timelineData, setTimelineData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const containerRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 80%", "end 50%"]
+  });
+
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
     const fetchTimeline = async () => {
@@ -100,14 +112,18 @@ const Timeline = () => {
           <p>A timeline of my life, professional, and educational milestones</p>
         </motion.div>
 
-        <div className="timeline-container">
+        <div className="timeline-container" ref={containerRef}>
+          <motion.div 
+            className="timeline-progress-line"
+            style={{ scaleY }}
+          />
           {timelineData.map((item, index) => (
             <motion.div
               key={item._id || item.id}
               initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: index * 0.1 }}
+              viewport={{ once: true, margin: "-100px" }}
               className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}
             >
               <div className="timeline-content">
@@ -150,7 +166,7 @@ const Timeline = () => {
                         className="tech-tag"
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: (index * 0.2) + (techIndex * 0.1) }}
+                        transition={{ duration: 0.3, delay: (index * 0.1) + (techIndex * 0.05) }}
                         viewport={{ once: true }}
                       >
                         {tech}
@@ -161,10 +177,14 @@ const Timeline = () => {
               </div>
 
               <div className="timeline-connector">
-                <div
+                <motion.div
                   className="timeline-dot"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                   style={{ backgroundColor: getTypeColor(item.type) }}
-                ></div>
+                ></motion.div>
               </div>
             </motion.div>
           ))}
@@ -175,3 +195,4 @@ const Timeline = () => {
 };
 
 export default Timeline;
+

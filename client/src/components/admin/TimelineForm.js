@@ -33,7 +33,7 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.type && <span className="error-text">{validationErrors.type}</span>}
       </div>
       <div className="form-group">
-        <label>Title:</label>
+        <label>Title {item.type === 'life' ? "(e.g., 'Born', 'Moved to New City')" : "(e.g., 'Software Engineer', 'B.Sc. Computer Science')"}:</label>
         <input
           type="text"
           value={item.title || ''}
@@ -42,7 +42,7 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.title && <span className="error-text">{validationErrors.title}</span>}
       </div>
       <div className="form-group">
-        <label>Company/Organization:</label>
+        <label>{item.type === 'work' ? 'Company Name' : item.type === 'education' ? 'School/University' : item.type === 'certification' ? 'Issuing Organization' : 'Context/Organization (e.g., Personal, Family)'}:</label>
         <input
           type="text"
           value={item.company || ''}
@@ -60,7 +60,7 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.location && <span className="error-text">{validationErrors.location}</span>}
       </div>
       <div className="form-group">
-        <label>Period Label (e.g. 2021 - Present):</label>
+        <label>Period Label {item.type === 'life' ? "(e.g. '1995', 'Jan 2000')" : "(e.g. '2021 - Present')"}:</label>
         <input
           type="text"
           value={item.period || ''}
@@ -69,13 +69,22 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.period && <span className="error-text">{validationErrors.period}</span>}
       </div>
       <div className="form-group">
-        <label>Sort Date (Items are ordered by this date):</label>
+        <label>Display Order (Optional/Tie-breaker):</label>
+        <input
+          type="number"
+          value={item.order !== undefined ? item.order : 0}
+          onChange={(e) => handleInputChange('order', parseInt(e.target.value, 10))}
+        />
+        <p className="help-text">🔢 Note: Used only if two activities have the exact same Date.</p>
+      </div>
+      <div className="form-group">
+        <label>Date of Activity (Primary Sorting - Oldest to Newest):</label>
         <input
           type="date"
           value={item.date ? new Date(item.date).toISOString().split('T')[0] : ''}
           onChange={(e) => handleInputChange('date', e.target.value)}
         />
-        <p className="help-text">📅 Note: This date is used for chronological sorting (Recent first).</p>
+        <p className="help-text">📅 Note: The timeline is ordered by this exact Date (Oldest activity first, up to the present day).</p>
       </div>
       <div className="form-group">
         <label>Description:</label>
@@ -87,7 +96,7 @@ const TimelineForm = ({ item, isNew, onChange, onSave, onCancel, validationError
         {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
       </div>
       <div className="form-group">
-        <label>Technologies/Skills (comma-separated):</label>
+        <label>{item.type === 'life' ? 'Tags/Keywords' : 'Technologies/Skills'} (comma-separated):</label>
         <input
           type="text"
           value={item.technologies ? item.technologies.join(', ') : ''}

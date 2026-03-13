@@ -2,3 +2,13 @@ node_modules/
 server/node_modules/
 client/node_modules/
 .env
+# build output
+client/build/
+
+# Docker
+docker-compose.override.yml
+Dockerfile
+
+# logs
+logs/
+npm-debug.log*

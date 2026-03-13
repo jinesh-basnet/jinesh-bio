@@ -63,15 +63,17 @@ const TimelineSection = ({
 
   const handleAdd = () => {
     setNewItem({
-      type: 'work',
+      type: 'life',
       title: '',
-      company: 'Company Name',
-      location: 'City, Country',
-      period: 'Month YYYY - Present',
+      company: 'Personal',
+      location: '',
+      period: '',
       description: '',
       technologies: [],
       timelineType: 'timeline',
-      featured: true
+      featured: true,
+      order: 0,
+      date: new Date().toISOString().split('T')[0]
     });
   };
 

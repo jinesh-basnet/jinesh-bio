@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "Portfolio website with React frontend and Express backend",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server/app.js",
     "server": "cd server && npm start",
     "client": "cd client && npm start",
     "install-server": "cd server && npm install",
     "install-client": "cd client && npm install",
-    "install-all": "npm install && npm run install-server && npm run install-client"
+    "install-all": "npm install && npm run install-server && npm run install-client",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

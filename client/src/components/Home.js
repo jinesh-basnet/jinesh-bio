@@ -8,6 +8,8 @@ import BIRDS from 'vanta/dist/vanta.birds.min';
 import { FaRocket, FaCode, FaChartLine, FaArrowRight } from 'react-icons/fa';
 import '../css/home.css';
 
+import { useTheme } from '../context/ThemeContext';
+
 if (typeof window !== 'undefined' && !window.THREE) {
   window.THREE = require('three');
 }
@@ -15,6 +17,7 @@ if (typeof window !== 'undefined' && !window.THREE) {
 const Home = () => {
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
+  const { theme } = useTheme();
   const [activeCategory, setActiveCategory] = useState('All');
   const [homeData, setHomeData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +42,14 @@ const Home = () => {
 
   useEffect(() => {
     try {
-      if (!vantaEffect.current && window.THREE && vantaRef.current) {
+      if (vantaRef.current) {
+        // Destroy existing effect before re-initializing
+        if (vantaEffect.current) {
+          vantaEffect.current.destroy();
+        }
+
+        const isDark = theme === 'dark';
+        
         vantaEffect.current = BIRDS({
           el: vantaRef.current,
           mouseControls: true,
@@ -49,9 +59,9 @@ const Home = () => {
           minWidth: 200.00,
           scale: 1.00,
           scaleMobile: 1.00,
-          backgroundColor: 0x0a0a0b,
-          color1: 0x007bff,
-          color2: 0x6c757d,
+          backgroundColor: isDark ? 0x0a0a0b : 0xf8fafc,
+          color1: isDark ? 0x007bff : 0x0056b3,
+          color2: isDark ? 0x6c757d : 0x495057,
           birdSize: 1.50,
           wingSpan: 20.00,
           speedLimit: 4.00,
@@ -75,7 +85,7 @@ const Home = () => {
         vantaEffect.current = null;
       }
     };
-  }, []);
+  }, [theme]); // Re-run when theme changes
 
   const hero = homeData?.hero || {
     heading: "Hi, I'm Jinesh Basnet",
@@ -171,15 +181,15 @@ const Home = () => {
 
             <div className="hero-stats">
               <div className="stat-item">
-                <span className="stat-value">03+</span>
+                <span className="stat-value">{String(homeData?.stats?.yearsOfExperience || 0).padStart(2, '0')}+</span>
                 <span className="stat-label">Years of Dev</span>
               </div>
               <div className="stat-item">
-                <span className="stat-value">15+</span>
+                <span className="stat-value">{String(homeData?.stats?.projectsCount || 0).padStart(2, '0')}+</span>
                 <span className="stat-label">Projects Done</span>
               </div>
               <div className="stat-item">
-                <span className="stat-value">10+</span>
+                <span className="stat-value">{String(homeData?.stats?.skillsCount || 0).padStart(2, '0')}+</span>
                 <span className="stat-label">Tech Stack</span>
               </div>
             </div>

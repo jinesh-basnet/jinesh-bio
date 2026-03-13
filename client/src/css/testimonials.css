@@ -301,6 +301,53 @@
     transform: rotate(90deg);
 }
 
+.testimonial-modal h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.testimonial-modal p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.testimonial-submission-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.testimonial-submission-form label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.testimonial-submission-form input,
+.testimonial-submission-form textarea {
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--surface-light);
+    color: var(--text-dark);
+    font-family: inherit;
+    transition: var(--transition-fast);
+}
+
+[data-theme="dark"] .testimonial-submission-form input,
+[data-theme="dark"] .testimonial-submission-form textarea {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.testimonial-submission-form input:focus,
+.testimonial-submission-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
 .testimonial-submission-form {
     margin-top: 2rem;
     display: flex;
@@ -341,6 +388,14 @@
     margin-top: 1rem;
     padding: 1rem;
     font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: var(--transition);
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
 }
 
 @media (max-width: 600px) {

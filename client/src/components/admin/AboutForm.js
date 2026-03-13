@@ -47,6 +47,16 @@ const AboutForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, 
         {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
       </div>
       <div className="form-group">
+        <label>Years of Experience:</label>
+        <input
+          type="number"
+          min="0"
+          value={item.experience || 0}
+          onChange={(e) => handleInputChange('experience', parseInt(e.target.value) || 0)}
+        />
+        <p className="help-text">📊 This value is used for the stats on the home page hero section.</p>
+      </div>
+      <div className="form-group">
         <label>Profile Image:</label>
         {item.profileImage && (
           <div className="current-image">

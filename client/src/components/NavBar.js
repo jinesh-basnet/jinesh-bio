@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [settings, setSettings] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
@@ -15,6 +16,18 @@ const NavBar = () => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Fetch site settings
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/settings`);
+        const data = await response.json();
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+    fetchSettings();
   }, []);
 
   const toggleTheme = () => {
@@ -51,7 +64,9 @@ const NavBar = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link to="/" aria-label="Go to home page">Portfolio</Link>
+          <Link to="/" aria-label="Go to home page">
+            {settings?.logoText || 'Portfolio'}
+          </Link>
         </motion.div>
 
         <motion.ul
@@ -61,72 +76,26 @@ const NavBar = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           role="menubar"
         >
-          <li role="none">
-            <Link
-              to="/"
-              className={location.pathname === '/' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/' ? 'page' : undefined}
-            >
-              Home
-            </Link>
-          </li>
-          <li role="none">
-            <Link
-              to="/about"
-              className={location.pathname === '/about' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/about' ? 'page' : undefined}
-            >
-              About
-            </Link>
-          </li>
-          <li role="none">
-            <Link
-              to="/projects"
-              className={location.pathname === '/projects' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/projects' ? 'page' : undefined}
-            >
-              Projects
-            </Link>
-          </li>
-          <li role="none">
-            <Link
-              to="/blog"
-              className={location.pathname === '/blog' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/blog' ? 'page' : undefined}
-            >
-              Blog
-            </Link>
-          </li>
-          <li role="none">
-            <Link
-              to="/testimonials"
-              className={location.pathname === '/testimonials' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/testimonials' ? 'page' : undefined}
-            >
-              Testimonials
-            </Link>
-          </li>
-          <li role="none">
-            <Link
-              to="/contact"
-              className={location.pathname === '/contact' ? 'active' : ''}
-              onClick={closeMenu}
-              role="menuitem"
-              aria-current={location.pathname === '/contact' ? 'page' : undefined}
-            >
-              Contact
-            </Link>
-          </li>
+          {[
+            { label: 'Home', path: '/' },
+            { label: 'About', path: '/about' },
+            { label: 'Projects', path: '/projects' },
+            { label: 'Blog', path: '/blog' },
+            { label: 'Testimonials', path: '/testimonials' },
+            { label: 'Contact', path: '/contact' }
+          ].map((item) => (
+            <li key={item.path} role="none">
+              <Link
+                to={item.path}
+                className={location.pathname === item.path ? 'active' : ''}
+                onClick={closeMenu}
+                role="menuitem"
+                aria-current={location.pathname === item.path ? 'page' : undefined}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
         </motion.ul>
 
         <motion.div

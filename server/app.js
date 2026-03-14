@@ -40,6 +40,11 @@ const app = express();
 app.disable('x-powered-by');
 const PORT = process.env.PORT || 5000;
 
+// Health check route - VERY IMPORTANT FOR VERCEL
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
+});
+
 // security middleware
 app.use(helmet());
 
@@ -65,14 +70,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio_db';
-mongoose.connect(MONGODB_URI)
-  .then(async () => {
-    console.log('Connected to MongoDB');
-    await seedDefaultAdmin();
-    await seedInitialData();
-  })
-  .catch(err => console.error('MongoDB connection error:', err));
+const MONGODB_URI = process.env.MONGODB_URI;
+if (MONGODB_URI) {
+  mongoose.connect(MONGODB_URI)
+    .then(async () => {
+      console.log('Connected to MongoDB');
+      // Seed in the background to avoid blocking function startup/response
+      seedDefaultAdmin().catch(err => console.error('Seeding admin error:', err));
+      seedInitialData().catch(err => console.error('Seeding data error:', err));
+    })
+    .catch(err => console.error('MongoDB connection error:', err));
+} else {
+  console.warn('⚠️ MONGODB_URI not provided. Some features may not work.');
+}
 
 // Seed default admin user (removed duplicate function, using the one from auth.js)
 
@@ -364,8 +374,10 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT} (NODE_ENV=${process.env.NODE_ENV})`);
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} (NODE_ENV=${process.env.NODE_ENV})`);
+  });
+}
 
 module.exports = app;

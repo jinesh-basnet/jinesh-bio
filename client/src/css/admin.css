@@ -6,12 +6,12 @@
 }
 
 .tab-button {
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     background: transparent;
     border: none;
-    border-bottom: 3px solid transparent;
-    color: var(--text-dark);
-    font-size: 1rem;
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -21,18 +21,18 @@
 }
 
 [data-theme="dark"] .tab-button {
-    color: var(--text-light);
+    color: var(--text-muted);
 }
 
 .tab-button:hover {
     color: var(--primary-color);
-    background: rgba(0, 123, 255, 0.05);
+    background: rgba(124, 58, 237, 0.05);
 }
 
 .tab-button.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-    background: rgba(0, 123, 255, 0.1);
+    color: white;
+    background: linear-gradient(135deg, var(--admin-accent-color), #9333ea);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .section-header {
@@ -266,14 +266,14 @@
 }
 
 .btn.primary {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--admin-accent-color), #9333ea);
     color: white;
 }
 
 .btn.primary:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, #9333ea, var(--admin-accent-color));
     transform: translateY(-2px);
-    box-shadow: var(--shadow-primary);
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
 }
 
 .btn.secondary {
@@ -317,6 +317,29 @@
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 2px solid var(--glass-border);
+}
+
+.type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.type-badge.blog {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+
+.type-badge.poem {
+    background: rgba(102, 16, 242, 0.1);
+    color: #6610f2;
+}
+
+.type-badge.line {
+    background: rgba(232, 62, 140, 0.1);
+    color: #e83e8c;
 }
 
 @media (max-width: 768px) {

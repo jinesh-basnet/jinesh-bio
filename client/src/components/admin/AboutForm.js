@@ -2,9 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
-const AboutForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, loading }) => {
-  const handleInputChange = (field, value) => {
-    onChange({ ...item, [field]: value });
+const AboutForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors = {}, loading }) => {
+const handleInputChange = (field, value) => {
+    if (field === 'profile3D') {
+      onChange({ 
+        ...item, 
+        profile3D: value 
+      });
+    } else {
+      onChange({ ...item, [field]: value });
+    }
   };
 
   const handleSkillChange = (index, field, value) => {
@@ -70,6 +77,149 @@ const AboutForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, 
         />
         <p className="help-text">💡 For best results, use a PNG image with transparent background. You can remove backgrounds at <a href="https://www.remove.bg" target="_blank" rel="noopener noreferrer">remove.bg</a></p>
       </div>
+
+      {/* 3D Profile Settings */}
+      <div className="form-group">
+        <label>🌐 3D Profile Orb Settings</label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={item.profile3D?.enabled || false}
+            onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, enabled: e.target.checked })}
+          />
+          Enable 3D Quantum Profile Orb
+        </label>
+        <div className="form-row">
+          <div>
+            <label>Orb Color:</label>
+            <input
+              type="color"
+              value={item.profile3D?.orbColor || '#007BFF'}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, orbColor: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>Ring Color:</label>
+            <input
+              type="color"
+              value={item.profile3D?.ringColor || '#00F2FF'}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, ringColor: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>Gender:</label>
+            <select
+              value={item.profile3D?.gender || 'male'}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, gender: e.target.value })}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-row">
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label className="checkbox-label" style={{ margin: 0 }}>
+              <input
+                type="checkbox"
+                checked={item.profile3D?.showRings !== false}
+                onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, showRings: e.target.checked })}
+              />
+              Show Skill Rings
+            </label>
+          </div>
+          <div style={{ flex: 2 }}>
+            <label>Particle Count (500-5000):</label>
+            <input
+              type="range"
+              min="500"
+              max="5000"
+              step="100"
+              value={item.profile3D?.particleCount || 2000}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, particleCount: parseInt(e.target.value) })}
+            />
+            <span>{item.profile3D?.particleCount || 2000}</span>
+          </div>
+        </div>
+        <div className="form-row">
+          <div>
+            <label>Particle Intensity (0-1):</label>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={item.profile3D?.particleIntensity || 0.8}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, particleIntensity: parseFloat(e.target.value) })}
+            />
+            <span>{(item.profile3D?.particleIntensity || 0.8).toFixed(1)}</span>
+          </div>
+          <div>
+            <label>Distortion Strength (0-2):</label>
+            <input
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value={item.profile3D?.distortionStrength || 1.0}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, distortionStrength: parseFloat(e.target.value) })}
+            />
+            <span>{(item.profile3D?.distortionStrength || 1.0).toFixed(1)}</span>
+          </div>
+        </div>
+        <div className="form-row">
+          <div>
+            <label>Spin Speed (0-5):</label>
+            <input
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value={item.profile3D?.spinSpeed || 1.0}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, spinSpeed: parseFloat(e.target.value) })}
+            />
+            <span>{(item.profile3D?.spinSpeed || 1.0).toFixed(1)}</span>
+          </div>
+          <div>
+            <label>Bloom Intensity (0-2):</label>
+            <input
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value={item.profile3D?.bloomIntensity || 1.0}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, bloomIntensity: parseFloat(e.target.value) })}
+            />
+            <span>{(item.profile3D?.bloomIntensity || 1.0).toFixed(1)}</span>
+          </div>
+        </div>
+        <div className="form-row">
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label className="checkbox-label" style={{ margin: 0 }}>
+              <input
+                type="checkbox"
+                checked={item.profile3D?.showTechOrbitals !== false}
+                onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, showTechOrbitals: e.target.checked })}
+              />
+              Show Tech Logos
+            </label>
+          </div>
+          <div style={{ flex: 2 }}>
+            <label>Tech Orbital Speed (0-3):</label>
+            <input
+              type="range"
+              min="0"
+              max="3"
+              step="0.1"
+              value={item.profile3D?.techOrbitalSpeed || 1.0}
+              onChange={(e) => handleInputChange('profile3D', { ...item.profile3D, techOrbitalSpeed: parseFloat(e.target.value) })}
+            />
+            <span>{(item.profile3D?.techOrbitalSpeed || 1.0).toFixed(1)}</span>
+          </div>
+        </div>
+        <p className="help-text">✨ Customize the interactive 3D profile orb - glowing sphere with particles, mouse distortion, skill rings, and tech logos!</p>
+      </div>
+
       <div className="form-group">
         <label>Skills:</label>
         {item.skills?.map((skill, index) => (

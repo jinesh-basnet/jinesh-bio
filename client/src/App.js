@@ -6,14 +6,15 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Home from './pages/Home';
-import About from './pages/About';
 import Projects from './pages/Projects';
 import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import Contact from './pages/Contact';
+import Timeline from './pages/Timeline';
 import Testimonials from './pages/Testimonials';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import { Navigate } from 'react-router-dom';
 import Admin from './pages/Admin';
 import AdminLogin from './pages/AdminLogin';
 import ViewerDashboard from './pages/ViewerDashboard';
@@ -31,8 +32,10 @@ function AppContent() {
       {!isAdminPath && <NavBar />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/about" element={<Navigate to="/#about" replace />} />
+        {/* About is now integrated into Home as #about section */}
         <Route path="/projects" element={<Projects />} />
+        <Route path="/timeline" element={<Timeline />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />

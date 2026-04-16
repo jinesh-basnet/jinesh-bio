@@ -4,7 +4,18 @@ import { FaSave, FaTimes } from 'react-icons/fa';
 
 const BlogForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, loading }) => {
   const handleInputChange = (field, value) => {
-    onChange({ ...item, [field]: value });
+    const updatedItem = { ...item, [field]: value };
+    
+    // For 'line' type, title and content should be the same to satisfy backend requirements
+    if (updatedItem.type === 'line') {
+      if (field === 'title') {
+        updatedItem.content = value;
+      } else if (field === 'type') {
+        updatedItem.content = updatedItem.title;
+      }
+    }
+    
+    onChange(updatedItem);
   };
 
   const handleTagsChange = (value) => {
@@ -19,30 +30,50 @@ const BlogForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
       className="admin-form"
     >
       <div className="form-group">
-        <label>Title:</label>
+        <label>Type:</label>
+        <select
+          value={item.type || 'blog'}
+          onChange={(e) => handleInputChange('type', e.target.value)}
+          className="form-control"
+        >
+          <option value="blog">Blog Post</option>
+          <option value="poem">Poem</option>
+          <option value="line">Line (Quick thought)</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>{item.type === 'line' ? 'The Line:' : 'Title:'}</label>
         <input
           type="text"
           value={item.title || ''}
+          placeholder={item.type === 'line' ? 'Enter your short line here...' : 'Enter title...'}
           onChange={(e) => handleInputChange('title', e.target.value)}
         />
         {validationErrors.title && <span className="error-text">{validationErrors.title}</span>}
       </div>
-      <div className="form-group">
-        <label>Content:</label>
-        <textarea
-          value={item.content || ''}
-          onChange={(e) => handleInputChange('content', e.target.value)}
-        />
-        {validationErrors.content && <span className="error-text">{validationErrors.content}</span>}
-      </div>
-      <div className="form-group">
-        <label>Excerpt:</label>
-        <textarea
-          value={item.excerpt || ''}
-          onChange={(e) => handleInputChange('excerpt', e.target.value)}
-        />
-        {validationErrors.excerpt && <span className="error-text">{validationErrors.excerpt}</span>}
-      </div>
+      {item.type !== 'line' && (
+        <div className="form-group">
+          <label>{item.type === 'poem' ? 'The Poem Content:' : 'Content:'}</label>
+          <textarea
+            rows={10}
+            value={item.content || ''}
+            onChange={(e) => handleInputChange('content', e.target.value)}
+          />
+          {validationErrors.content && <span className="error-text">{validationErrors.content}</span>}
+        </div>
+      )}
+
+      {item.type === 'blog' && (
+        <div className="form-group">
+          <label>Excerpt (Summary):</label>
+          <textarea
+            value={item.excerpt || ''}
+            onChange={(e) => handleInputChange('excerpt', e.target.value)}
+          />
+          {validationErrors.excerpt && <span className="error-text">{validationErrors.excerpt}</span>}
+        </div>
+      )}
       <div className="form-group">
         <label>Author:</label>
         <input
@@ -61,14 +92,16 @@ const BlogForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
         />
         {validationErrors.category && <span className="error-text">{validationErrors.category}</span>}
       </div>
-      <div className="form-group">
-        <label>Featured Image URL:</label>
-        <input
-          type="text"
-          value={item.featuredImage || ''}
-          onChange={(e) => handleInputChange('featuredImage', e.target.value)}
-        />
-      </div>
+      {item.type !== 'line' && (
+        <div className="form-group">
+          <label>Featured Image URL:</label>
+          <input
+            type="text"
+            value={item.featuredImage || ''}
+            onChange={(e) => handleInputChange('featuredImage', e.target.value)}
+          />
+        </div>
+      )}
       <div className="form-group">
         <label>Tags (comma-separated):</label>
         <input

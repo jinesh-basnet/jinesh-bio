@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaEdit } from 'react-icons/fa';
 import AboutForm from './AboutForm';
+import QuantumProfile3D from '../common/QuantumProfile3D';
 
 const AboutSection = ({ about, loading, onSave, validationErrors }) => {
   const [editingItem, setEditingItem] = useState(null);
@@ -25,22 +26,41 @@ const AboutSection = ({ about, loading, onSave, validationErrors }) => {
       {about ? (
         <div className="about-content">
           <div className="about-preview">
-            {about.profileImage && (
-              <div className="preview-image-container">
-                <img
-                  src={about.profileImage}
-                  alt="Profile"
-                  style={{
-                    width: '150px',
-                    height: '150px',
-                    objectFit: 'cover',
-                    borderRadius: '15px',
-                    marginBottom: '1.5rem',
-                    border: '3px solid var(--primary-color)'
-                  }}
-                />
+            {about.profileImage || about.profile3D?.enabled ? (
+              <div className="preview-image-container" style={{ 
+                width: '200px', 
+                height: '200px', 
+                borderRadius: '15px', 
+                border: '3px solid var(--primary-color)', 
+                overflow: 'hidden',
+                background: 'var(--dark-bg)',
+                position: 'relative'
+              }}>
+                {about.profile3D?.enabled ? (
+                  <QuantumProfile3D 
+                    profileImage={about.profileImage}
+                    profile3D={about.profile3D}
+                    skills={about.skills || []}
+                    className="admin-preview-3d"
+                  />
+                ) : (
+                  <img
+                    src={about.profileImage}
+                    alt="Profile"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                )}
+                {about.profile3D?.enabled && (
+                  <div style={{ position: 'absolute', top: 5, right: 5, background: 'var(--primary-color)', color: 'white', padding: '2px 6px', borderRadius: '10px', fontSize: '0.7rem', zIndex: 10 }}>
+                    3D Active
+                  </div>
+                )}
               </div>
-            )}
+            ) : null}
             <h4>{about.title}</h4>
             <p>{about.description}</p>
 

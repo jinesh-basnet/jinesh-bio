@@ -15,7 +15,8 @@ const BlogsSection = ({
   onDelete,
   onSaveNew,
   onSave,
-  validationErrors
+  validationErrors,
+  typeFilter = 'blog'
 }) => {
   const [newItem, setNewItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
@@ -27,6 +28,9 @@ const BlogsSection = ({
 
   const filteredBlogs = useMemo(() => {
     return blogs.filter(blog => {
+      const matchesType = (blog.type || 'blog') === typeFilter;
+      if (!matchesType) return false;
+
       const matchesSearch = searchTerm === '' ||
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (blog.content && blog.content.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -36,7 +40,7 @@ const BlogsSection = ({
 
       return matchesSearch && matchesCategory;
     });
-  }, [blogs, searchTerm, selectedCategory]);
+  }, [blogs, searchTerm, selectedCategory, typeFilter]);
 
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
   const paginatedBlogs = filteredBlogs.slice(
@@ -63,7 +67,7 @@ const BlogsSection = ({
   };
 
   const handleToggleFeatured = async (blog) => {
-    const updatedBlog = { ...blog, featured: !blog.featured, type: 'blog' };
+    const updatedBlog = { ...blog, featured: !blog.featured };
     await onSave(updatedBlog);
   };
 
@@ -72,18 +76,18 @@ const BlogsSection = ({
       title: '',
       content: '',
       excerpt: '',
-      category: 'Technology',
+      category: typeFilter === 'blog' ? 'Technology' : typeFilter === 'poem' ? 'Poetry' : 'Thoughts',
       author: 'Admin',
       tags: [],
       featuredImage: '',
       published: false,
       featured: false,
-      type: 'blog'
+      type: typeFilter
     });
   };
 
   const handleEdit = (blog) => {
-    setEditingItem({ ...blog, type: 'blog' });
+    setEditingItem({ ...blog });
   };
 
   const handleSave = async () => {
@@ -100,15 +104,15 @@ const BlogsSection = ({
     <>
       <div className="section-header">
         <div className="header-left">
-          <h3>Blog Posts</h3>
-          <p className="subtitle">Share your thoughts and tutorials</p>
+          <h3>{typeFilter === 'poem' ? 'Poems' : typeFilter === 'line' ? 'Lines' : 'Blog Posts'}</h3>
+          <p className="subtitle">{typeFilter === 'poem' ? 'Your creative collection' : typeFilter === 'line' ? 'Quick thoughts and quotes' : 'Share your thoughts and tutorials'}</p>
         </div>
         <button onClick={handleAdd} className="btn primary" disabled={loading}>
-          <FaPlus /> Add Blog Post
+          <FaPlus /> Add {typeFilter === 'poem' ? 'Poem' : typeFilter === 'line' ? 'Line' : 'Blog Post'}
         </button>
       </div>
 
-      {newItem && newItem.type === 'blog' && (
+      {newItem && (
         <BlogForm
           item={newItem}
           isNew={true}
@@ -127,7 +131,7 @@ const BlogsSection = ({
           placeholder="Search blogs..."
         />
         <FilterDropdown
-          options={['All', 'Technology', 'Tutorial', 'Personal', 'Development', 'Design']}
+          options={typeFilter === 'blog' ? ['All', 'Technology', 'Tutorial', 'Personal', 'Development', 'Design'] : ['All', 'Poetry', 'Personal', 'Thoughts', 'Life']}
           value={selectedCategory}
           onChange={setSelectedCategory}
           placeholder="Filter by category..."
@@ -139,7 +143,7 @@ const BlogsSection = ({
         selectedItems={selectedItems}
         onSelectionChange={setSelectedItems}
         renderItem={(blog) => (
-          editingItem && editingItem._id === blog._id && editingItem.type === 'blog' ? (
+          editingItem && editingItem._id === blog._id ? (
             <BlogForm
               item={editingItem}
               isNew={false}
@@ -169,6 +173,7 @@ const BlogsSection = ({
                 <div className="item-title-row">
                   <h4>{blog.title}</h4>
                   {blog.featured && <span className="featured-badge"><FaStar /> Featured</span>}
+                  <span className={`type-badge ${blog.type || 'blog'}`}>{ (blog.type || 'blog').charAt(0).toUpperCase() + (blog.type || 'blog').slice(1) }</span>
                   {blog.published ? <span className="status-badge published">Published</span> : <span className="status-badge draft">Draft</span>}
                 </div>
                 <p>{blog.excerpt || blog.content?.substring(0, 100) + '...'}</p>

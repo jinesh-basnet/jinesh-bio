@@ -6,7 +6,6 @@ const BlogForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
   const handleInputChange = (field, value) => {
     const updatedItem = { ...item, [field]: value };
     
-    // For 'line' type, title and content should be the same to satisfy backend requirements
     if (updatedItem.type === 'line') {
       if (field === 'title') {
         updatedItem.content = value;

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
-const HomeForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, loading }) => {
+const HomeForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors = {}, loading }) => {
   const handleHeroChange = (field, value) => {
     onChange({
       ...item,
@@ -180,32 +180,161 @@ const HomeForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
           <label>Skills:</label>
           {item.skills?.skillsList?.map((skill, index) => (
             <div key={index} className="skill-input-group">
-              <div className="skill-field">
-                <input
-                  type="text"
-                  placeholder="Skill name"
-                  value={skill.name || ''}
-                  onChange={(e) => handleSkillChange(index, 'name', e.target.value)}
-                />
-                {validationErrors[`skill_${index}_name`] && <span className="error-text">{validationErrors[`skill_${index}_name`]}</span>}
+              <div className="skill-row">
+                <div className="skill-field">
+                  <input
+                    type="text"
+                    placeholder="Skill name (e.g. React)"
+                    value={skill.name || ''}
+                    onChange={(e) => handleSkillChange(index, 'name', e.target.value)}
+                  />
+                </div>
+                <div className="skill-field narrow">
+                  <input
+                    type="text"
+                    placeholder="Icon (e.g. ⚛️)"
+                    value={skill.icon || ''}
+                    onChange={(e) => handleSkillChange(index, 'icon', e.target.value)}
+                  />
+                </div>
+                <div className="skill-field narrow">
+                  <select
+                    value={skill.category || 'All'}
+                    onChange={(e) => handleSkillChange(index, 'category', e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Database">Database</option>
+                    <option value="Tools">Tools</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Design">Design</option>
+                  </select>
+                </div>
+                <div className="skill-field narrow">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder="Level"
+                    value={skill.level || 50}
+                    onChange={(e) => handleSkillChange(index, 'level', parseInt(e.target.value) || 50)}
+                  />
+                </div>
               </div>
-              <div className="skill-field">
-                <input
-                  type="number"
-                  placeholder="Level"
-                  min="1"
-                  max="100"
-                  value={skill.level || 50}
-                  onChange={(e) => handleSkillChange(index, 'level', parseInt(e.target.value) || 50)}
-                />
-                {validationErrors[`skill_${index}_level`] && <span className="error-text">{validationErrors[`skill_${index}_level`]}</span>}
+              
+              <div className="skill-details">
+                <div className="form-group">
+                  <label>Description:</label>
+                  <textarea
+                    rows="2"
+                    placeholder="What can you do with this skill? Real-world examples..."
+                    value={skill.description || ''}
+                    onChange={(e) => handleSkillChange(index, 'description', e.target.value)}
+                  />
+                </div>
+                
+                <div className="form-group mini">
+                  <label>Projects using this skill:</label>
+                  {skill.projects?.map((proj, pIdx) => (
+                    <div key={pIdx} className="mini-input-group">
+                      <input
+                        placeholder="Project name"
+                        value={proj.name || ''}
+                        onChange={(e) => {
+                          const newProjects = [...(skill.projects || [])];
+                          newProjects[pIdx] = { ...newProjects[pIdx], name: e.target.value };
+                          handleSkillChange(index, 'projects', newProjects);
+                        }}
+                      />
+                      <input
+                        placeholder="URL"
+                        value={proj.url || ''}
+                        onChange={(e) => {
+                          const newProjects = [...(skill.projects || [])];
+                          newProjects[pIdx] = { ...newProjects[pIdx], url: e.target.value };
+                          handleSkillChange(index, 'projects', newProjects);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="btn tiny danger"
+                        onClick={() => {
+                          const newProjects = skill.projects.filter((_, p) => p !== pIdx);
+                          handleSkillChange(index, 'projects', newProjects);
+                        }}
+                      >×</button>
+                    </div>
+                  )) || null}
+                  <button
+                    type="button"
+                    className="btn tiny"
+                    onClick={() => {
+                      const newProjects = [...(skill.projects || []), { name: '', url: '' }];
+                      handleSkillChange(index, 'projects', newProjects);
+                    }}
+                  >+ Project</button>
+                </div>
+                
+                <div className="form-group mini">
+                  <label>GitHub Repos:</label>
+                  {skill.repos?.map((repo, rIdx) => (
+                    <div key={rIdx} className="mini-input-group">
+                      <input
+                        placeholder="Repo name"
+                        value={repo.name || ''}
+                        onChange={(e) => {
+                          const newRepos = [...(skill.repos || [])];
+                          newRepos[rIdx] = { ...newRepos[rIdx], name: e.target.value };
+                          handleSkillChange(index, 'repos', newRepos);
+                        }}
+                      />
+                      <input
+                        placeholder="URL"
+                        value={repo.url || ''}
+                        onChange={(e) => {
+                          const newRepos = [...(skill.repos || [])];
+                          newRepos[rIdx] = { ...newRepos[rIdx], url: e.target.value };
+                          handleSkillChange(index, 'repos', newRepos);
+                        }}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Stars"
+                        value={repo.stars || 0}
+                        onChange={(e) => {
+                          const newRepos = [...(skill.repos || [])];
+                          newRepos[rIdx] = { ...newRepos[rIdx], stars: parseInt(e.target.value) || 0 };
+                          handleSkillChange(index, 'repos', newRepos);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="btn tiny danger"
+                        onClick={() => {
+                          const newRepos = skill.repos.filter((_, r) => r !== rIdx);
+                          handleSkillChange(index, 'repos', newRepos);
+                        }}
+                      >×</button>
+                    </div>
+                  )) || null}
+                  <button
+                    type="button"
+                    className="btn tiny"
+                    onClick={() => {
+                      const newRepos = [...(skill.repos || []), { name: '', url: '', stars: 0 }];
+                      handleSkillChange(index, 'repos', newRepos);
+                    }}
+                  >+ Repo</button>
+                </div>
               </div>
+              
               <button
                 type="button"
                 onClick={() => removeSkill(index)}
                 className="btn small danger"
               >
-                Remove
+                Remove Skill
               </button>
             </div>
           ))}
@@ -214,7 +343,7 @@ const HomeForm = ({ item, isNew, onChange, onSave, onCancel, validationErrors, l
             onClick={addSkill}
             className="btn small"
           >
-            Add Skill
+            + Add Skill
           </button>
           {validationErrors.skills_list && <span className="error-text">{validationErrors.skills_list}</span>}
         </div>

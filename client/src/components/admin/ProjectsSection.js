@@ -1,5 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { FaPlus, FaGithub, FaSync, FaStar, FaRegStar } from 'react-icons/fa';
+import './AdminProjects.css';
+import { 
+  FaPlus, FaGithub, FaSync, FaStar, FaRegStar, FaCode,
+  FaExternalLinkAlt, FaFolderOpen
+} from 'react-icons/fa';
 import ProjectForm from './ProjectForm';
 import AdminList from './AdminList';
 import AdminItem from './AdminItem';
@@ -15,7 +19,7 @@ const ProjectsSection = ({
   onDelete,
   onSaveNew,
   onSave,
-  validationErrors
+  validationErrors = {}
 }) => {
   const [newItem, setNewItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
@@ -24,7 +28,7 @@ const ProjectsSection = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isSyncing, setIsSyncing] = useState(false);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
@@ -58,7 +62,6 @@ const ProjectsSection = ({
       const repos = await response.json();
 
       let createdCount = 0;
-      // Use a local set of URLs to track what we've already synced during this session
       const existingUrls = new Set(projects.map(p => p.html_url));
 
       for (const repo of repos) {
@@ -140,23 +143,34 @@ const ProjectsSection = ({
     setNewItem(null);
   };
 
+  const featuredCount = useMemo(() => projects.filter(p => p.featured).length, [projects]);
+
   return (
-    <>
-      <div className="section-header">
-        <div className="header-left">
-          <h3>Projects</h3>
-          <p className="subtitle">Manage and highlight your best work</p>
+    <div className="admin-projects-layout">
+      <div className="section-header-modern">
+        <div className="header-content">
+          <h3>Project Portfolio</h3>
+          <div className="header-stats-pills">
+            <span className="stat-pill">
+              <strong>{projects.length}</strong> Total Projects
+            </span>
+            <span className="stat-pill featured">
+              <strong>{featuredCount}</strong> Featured active
+            </span>
+          </div>
         </div>
         <div className="header-actions">
           <button
             onClick={handleSyncGitHub}
-            className="btn secondary sync-btn"
+            className="btn-modern secondary"
             disabled={loading || isSyncing}
           >
-            <FaSync className={isSyncing ? 'spinning' : ''} /> {isSyncing ? 'Syncing...' : 'Sync GitHub'}
+            <FaSync className={isSyncing ? 'spinning' : ''} />
+            <span>{isSyncing ? 'Sync GitHub' : 'Sync GitHub'}</span>
           </button>
-          <button onClick={handleAdd} className="btn primary" disabled={loading}>
-            <FaPlus /> Add Project
+          <button onClick={handleAdd} className="btn-modern primary" disabled={loading}>
+            <FaPlus />
+            <span>New Project</span>
           </button>
         </div>
       </div>
@@ -173,18 +187,22 @@ const ProjectsSection = ({
         />
       )}
 
-      <div className="search-filter-container">
-        <SearchBar
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Search projects..."
-        />
-        <FilterDropdown
-          options={['All', 'JavaScript', 'Python', 'Java', 'C++', 'HTML', 'CSS', 'React', 'Node.js', 'TypeScript']}
-          value={selectedLanguage}
-          onChange={setSelectedLanguage}
-          placeholder="Filter by language..."
-        />
+      <div className="search-filter-modern glass-card" style={{ display: 'flex', flexDirection: 'row', gap: '1rem', padding: '1.25rem' }}>
+        <div style={{ flex: 1 }}>
+          <SearchBar
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Quick search projects..."
+          />
+        </div>
+        <div style={{ width: '200px' }}>
+          <FilterDropdown
+            options={['All', 'JavaScript', 'Python', 'Java', 'C++', 'HTML', 'CSS', 'React', 'Node.js', 'TypeScript']}
+            value={selectedLanguage}
+            onChange={setSelectedLanguage}
+            placeholder="Language..."
+          />
+        </div>
       </div>
 
       <AdminList
@@ -212,27 +230,36 @@ const ProjectsSection = ({
                 <button
                   className={`action-btn featured-toggle ${project.featured ? 'active' : ''}`}
                   onClick={() => handleToggleFeatured(project)}
+                  style={{ color: project.featured ? '#f59e0b' : '#94a3b8' }}
                   title={project.featured ? "Unmark as Featured" : "Mark as Featured"}
                 >
                   {project.featured ? <FaStar /> : <FaRegStar />}
                 </button>
               }
             >
-              <div className="item-main">
-                <div className="item-title-row">
+              <div className="project-item-card">
+                <div className="project-title-area">
+                   {project.featured ? <FaFolderOpen style={{ color: '#f59e0b', fontSize: '1.2rem'}} /> : <FaCode style={{ color: '#6366f1'}} />}
                   <h4>{project.name}</h4>
-                  {project.featured && <span className="featured-badge"><FaStar /> Featured</span>}
-                </div>
-                <p>{project.description}</p>
-                <div className="item-footer">
-                  <span className="item-meta">
-                    <span className={`lang-dot ${project.language?.toLowerCase()}`}></span>
+                  <span className={`lang-badge ${project.language?.toLowerCase()}`}>
                     {project.language}
                   </span>
-                  <span className="item-meta">⭐ {project.stargazers_count}</span>
-                  <a href={project.html_url} target="_blank" rel="noopener noreferrer" className="github-link">
-                    <FaGithub /> View Source
-                  </a>
+                </div>
+                <p style={{ margin: '0 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                  {project.description || 'No description available for this project.'}
+                </p>
+                <div className="project-meta-row">
+                  <span className="meta-item"><FaRegStar /> {project.stargazers_count || 0} Stars</span>
+                  {project.html_url && (
+                    <a href={project.html_url} target="_blank" rel="noopener noreferrer" className="meta-link">
+                      <FaGithub /> Source
+                    </a>
+                  )}
+                  {project.homepage && (
+                    <a href={project.homepage} target="_blank" rel="noopener noreferrer" className="meta-link">
+                      <FaExternalLinkAlt /> Live
+                    </a>
+                  )}
                 </div>
               </div>
             </AdminItem>
@@ -240,28 +267,31 @@ const ProjectsSection = ({
         )}
       />
 
-      <BulkActions
-        selectedItems={selectedItems}
-        totalItems={filteredProjects.length}
-        data={filteredProjects}
-        onSelectAll={(e) => {
-          if (e.target.checked) {
-            setSelectedItems(filteredProjects);
-          } else {
-            setSelectedItems([]);
-          }
-        }}
-        onBulkDelete={handleBulkDelete}
-        onBulkUpdate={handleBulkUpdate}
-      />
+      <div style={{ marginTop: 'auto' }}>
+        <BulkActions
+          selectedItems={selectedItems}
+          totalItems={filteredProjects.length}
+          data={filteredProjects}
+          onSelectAll={(e) => {
+            if (e.target.checked) {
+              setSelectedItems(filteredProjects);
+            } else {
+              setSelectedItems([]);
+            }
+          }}
+          onBulkDelete={handleBulkDelete}
+          onBulkUpdate={handleBulkUpdate}
+        />
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-    </>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </div>
   );
 };
 
 export default ProjectsSection;
+

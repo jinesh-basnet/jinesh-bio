@@ -11,22 +11,25 @@ const Timeline = require('../models/Timeline');
 const User = require('../models/User');
 const Contact = require('../models/Contact');
 const Settings = require('../models/Settings');
+const AuditLog = require('../models/AuditLog');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const { removeBackground } = require('../utils/removeBackground');
 
-const logAudit = (action, resource, resourceId, userId, details = {}, ip = null) => {
-  const timestamp = new Date().toISOString();
-  const logEntry = {
-    timestamp,
-    action,
-    resource,
-    resourceId,
-    userId,
-    details,
-    ip,
-  };
-
-  console.log(`[AUDIT] ${JSON.stringify(logEntry)}`);
+const logAudit = async (action, resource, resourceId, userId, details = {}, ip = null) => {
+  try {
+    const logEntry = new AuditLog({
+      action,
+      resource,
+      resourceId: resourceId?.toString(),
+      userId,
+      details,
+      ip,
+    });
+    await logEntry.save();
+    console.log(`[AUDIT] ${JSON.stringify(logEntry)}`);
+  } catch (err) {
+    console.error(`[AUDIT ERROR] Failed to save log: ${err.message}`);
+  }
 };
 
 const auditMiddleware = (req, res, next) => {
@@ -319,6 +322,14 @@ router.put('/about', upload.single('profileImage'), async (req, res) => {
         aboutData.cvSettings = JSON.parse(aboutData.cvSettings);
       } catch (e) {
         console.error('Error parsing cvSettings string:', e);
+      }
+    }
+
+    if (typeof aboutData.profile3D === 'string') {
+      try {
+        aboutData.profile3D = JSON.parse(aboutData.profile3D);
+      } catch (e) {
+        console.error('Error parsing profile3D string:', e);
       }
     }
 
@@ -823,6 +834,19 @@ router.delete('/users/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
+router.get('/activity', async (req, res) => {
+  try {
+    const logs = await AuditLog.find()
+      .populate('userId', 'username')
+      .sort({ timestamp: -1 })
+      .limit(10);
+    res.json(logs);
+  } catch (error) {
+    console.error('Error fetching activity:', error);
+    res.status(500).json({ error: 'Failed to fetch activity logs' });
   }
 });
 

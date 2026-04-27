@@ -164,6 +164,12 @@ export const useAdminValidation = () => {
         if (!skill.level || skill.level < 1 || skill.level > 100) {
           errors[`skill_${index}_level`] = `Skill ${index + 1} level must be between 1 and 100`;
         }
+        if (skill.description && skill.description.trim().length < 10) {
+          errors[`skill_${index}_description`] = `Description should be at least 10 characters`;
+        }
+        if (skill.projects && skill.projects.some(p => (!p.name || !p.url))) {
+          errors[`skill_${index}_projects`] = `Projects must have name + URL`;
+        }
       });
     }
 

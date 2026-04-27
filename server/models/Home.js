@@ -18,9 +18,28 @@ const skillSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['All', 'Frontend', 'Backend', 'Database', 'Tools'],
+    enum: ['All', 'Frontend', 'Backend', 'Database', 'Tools', 'DevOps', 'Design'],
     default: 'All'
-  }
+  },
+  description: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  projects: [{
+    name: String,
+    url: String
+  }],
+  repos: [{
+    name: String,
+    url: String,
+    stars: Number
+  }],
+  certifications: [{
+    name: String,
+    issuer: String,
+    url: String
+  }]
 });
 
 const heroButtonSchema = new mongoose.Schema({

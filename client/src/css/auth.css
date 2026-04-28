@@ -1,5 +1,3 @@
-/* Auth related styles (Login, Signup, AdminLogin) */
-/* Base Section Styles */
 .auth-section {
     min-height: 100vh;
     display: flex;
@@ -11,9 +9,7 @@
     transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Real-time Atmospheric Sections (Granular) */
 
-/* Morning: Sunrise Vibes (5 AM - 10 AM) */
 [data-time="morning"] .auth-section {
     background: 
         radial-gradient(at 0% 0%, hsla(280, 80%, 90%, 1) 0, transparent 50%), 
@@ -22,7 +18,6 @@
         #fdf2f8;
 }
 
-/* Afternoon: Bright Day (10 AM - 4 PM) */
 [data-time="afternoon"] .auth-section {
     background: 
         radial-gradient(at 0% 0%, hsla(199, 89%, 82%, 1) 0, transparent 50%), 
@@ -31,7 +26,6 @@
         #f8fafc;
 }
 
-/* Evening: Sunset (4 PM - 7 PM) */
 [data-time="evening"] .auth-section {
     background: 
         radial-gradient(at 0% 0%, hsla(10, 80%, 15%, 1) 0, transparent 50%), 
@@ -40,7 +34,6 @@
         #1a0b12;
 }
 
-/* Night: Deep Midnight (7 PM - 5 AM) */
 [data-time="night"] .auth-section {
     background: 
         radial-gradient(at 0% 0%, hsla(240, 45%, 12%, 1) 0, transparent 50%), 
@@ -50,7 +43,12 @@
 }
 
 
-/* Nepali Scenic Background - Enhanced */
+.auth-container {
+    width: 100%;
+    max-width: clamp(320px, 90vw, 480px);
+    z-index: 1;
+}
+
 .nepal-bg {
     position: absolute;
     top: 0;
@@ -61,14 +59,11 @@
     pointer-events: none;
     overflow: hidden;
 }
-
-/* Granular Real-time Adjustments */
 [data-time="morning"] .sun { top: 20%; right: 70%; opacity: 0.8; }
 [data-time="afternoon"] .sun { top: 10%; right: 15%; opacity: 1; }
 [data-time="evening"] .moon { top: 20%; right: 70%; opacity: 0.6; display: block; }
 [data-time="night"] .moon { top: 10%; right: 15%; opacity: 1; display: block; }
 
-/* Mountain/Environment Adjustments */
 [data-time="morning"] .mountain-layer { opacity: 0.4; filter: blur(3px) sepia(0.3); }
 [data-time="afternoon"] .mountain-layer { opacity: 0.3; filter: blur(2px); }
 [data-time="evening"] .mountain-layer { opacity: 0.15; filter: blur(4px) hue-rotate(280deg); }
@@ -79,16 +74,14 @@
 [data-time="evening"] .hill-layer { opacity: 0.4; filter: contrast(1.2); }
 [data-time="night"] .hill-layer { opacity: 0.3; filter: brightness(0.5); }
 
-/* Stars visibility */
 [data-time="evening"] .stars { opacity: 0.2; }
 [data-time="night"] .stars { opacity: 0.6; }
 [data-time="morning"] .stars { opacity: 0.1; }
 
-/* Real-time Atmospheric Elements */
 .sun, .moon {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: clamp(50px, 10vw, 80px);
+    height: clamp(50px, 10vw, 80px);
     border-radius: 50%;
     z-index: 1;
     transition: all 3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -110,7 +103,6 @@
     animation: moonFloat 12s ease-in-out infinite alternate;
 }
 
-/* Time-specific overrides for visibility */
 [data-time="morning"] .sun, [data-time="afternoon"] .sun { display: block; }
 [data-time="evening"] .moon, [data-time="night"] .moon { display: block; }
 
@@ -124,7 +116,6 @@
     100% { transform: rotate(-15deg) translate(-30px, 15px); }
 }
 
-/* Premium Mountains with Multilayer Parallax */
 .mountain-layer {
     position: absolute;
     bottom: -10px;
@@ -162,7 +153,6 @@
     to { transform: translateX(-50%); }
 }
 
-/* Stars / Snow / Particles */
 .stars {
     position: absolute;
     top: 0;
@@ -191,7 +181,6 @@
     100% { transform: scale(1.1) translateY(-10px); opacity: 0.7; }
 }
 
-/* Refined Clouds */
 .cloud {
     position: absolute;
     background: white;
@@ -211,7 +200,6 @@
     to { transform: translateX(calc(100vw + 200px)); }
 }
 
-/* Prayer Flags (Lhungta) */
 .prayer-flags {
     position: absolute;
     top: 50px;
@@ -254,7 +242,6 @@
     border-bottom: 2px solid gold;
 }
 
-/* Mandala Watermark for Card */
 .mandala-watermark {
     position: absolute;
     top: 50%;
@@ -278,14 +265,14 @@
 
 .auth-container {
     width: 100%;
-    max-width: 480px;
+    max-width: clamp(320px, 95vw, 480px);
     z-index: 1;
+    margin: auto;
 }
 
-/* Refined Auth Card with Glassmorphism */
 .auth-card {
     position: relative;
-    padding: 3.5rem 3rem;
+    padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem);
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(20px);
@@ -309,7 +296,6 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-/* Moving Light Beam Effect */
 .auth-card::before {
     content: '';
     position: absolute;
@@ -380,7 +366,7 @@
 }
 
 .auth-header h2 {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
     font-weight: 900;
     margin-bottom: 0.5rem;
     background: linear-gradient(135deg, #DC143C, #003893);
@@ -540,7 +526,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Glassmorphism Background Elements */
 .bg-bubbles {
     position: absolute;
     top: 0;
